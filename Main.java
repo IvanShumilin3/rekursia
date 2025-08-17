@@ -18,22 +18,26 @@ public class Main {
         System.out.println("Iterative = " + iterative + " | Recursive = " + recursive);
     }
 
-    public static int chooseHobbyRecursive(int[] startNumbers, int day, int[] memory) {
-        int[] sharedArray = new int[startNumbers.length + memory.length];
-        System.arraycopy(startNumbers, 0, sharedArray, 0, startNumbers.length);
-        System.arraycopy(memory, 0, sharedArray, 4, memory.length);
+    public static int chooseHobbyRecursive(int[] startNumbers, int day) {
 
-        int prv = sharedArray[sharedArray.length - 1 - day];
-        int prePrePrev = sharedArray[sharedArray.length - 1 - day - 2];
-        int result = (prv * prePrePrev) % 10 + 1;
+        int[] dp = new int[day + 4];
 
-        if (day == 1) {
-            return result;
+        for (int i = 0; i < 4; i++) {
+            dp[i] = startNumbers[i];
         }
+        return recursive(dp, day + 3);
+    }
 
-        memory[memory.length - day] = result;
+    private static int recursive(int[] dp, int index) {
+        // Если значение уже вычислено, возвращаем его
+        if (dp[index] != 0) {
+            return dp[index];
+        }
+        int prev = recursive(dp, index - 1);
+        int prePrePrev = recursive(dp, index - 3);
+        dp[index] = (prev * prePrePrev) % 10 + 1;
 
-        return chooseHobbyRecursive(startNumbers, day - 1, memory);
+        return dp[index];
     }
 
     public static int chooseHobbyIterative(int[] startNumbers, int day) {
